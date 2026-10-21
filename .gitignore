@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Fontes e resultados analíticos locais; manter as instruções de cada pasta.
+/data/**
+!/data/**/
+!/data/**/README.md
+
+# Arquivos temporários de exportação
+*.tmp.json

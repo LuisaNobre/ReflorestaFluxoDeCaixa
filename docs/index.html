@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Análise territorial e financeira da recuperação de áreas degradadas do Refloresta.">
+  <title>Refloresta · Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23285c43'/%3E%3Cpath d='M9 23V9h7a5 5 0 0 1 0 10h-7m7 0 7 5' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/style.css?v=20261021-cenarios-3">
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+  <script src="assets/vendor/leaflet/leaflet.js" defer></script>
+  <script src="assets/mapa.js?v=20261021-cenarios-1" defer></script>
+  <script src="assets/cenarios.js?v=20261021-cenarios-3" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">REFLORESTA</p>
+      <h1>Cenários de Aplicação do ReflorestaSP</h1>
+      <p>São Paulo · Análise territorial e financeira por região.</p>
+    </header>
+    <section class="map-section" aria-labelledby="map-title">
+      <div class="map-heading">
+        <div><p class="eyebrow">EXPLORAR O TERRITÓRIO</p><h2 id="map-title">Camadas de São Paulo</h2></div>
+        <button id="enquadrar" type="button" disabled>Ver todo o estado</button>
+      </div>
+      <div class="map-layout">
+        <aside class="map-sidebar" aria-label="Camadas e legenda">
+          <h3>Camadas</h3>
+          <p class="hint">Combine camadas, filtre as classes e ajuste a transparência.</p>
+          <div class="layer-option">
+            <label class="layer-title"><input type="checkbox" id="layer-regioes" checked disabled> Regiões ecológicas</label>
+            <p>6 regiões · Refloresta</p>
+            <label class="opacity-label" for="opacity-regioes">Opacidade <output id="value-regioes">100%</output></label>
+            <input type="range" id="opacity-regioes" min="0" max="100" value="100" disabled>
+            <div id="filter-regioes"></div>
+          </div>
+          <div class="layer-option">
+            <label class="layer-title"><input type="checkbox" id="layer-fito" disabled> Regiões e fitofisionomias</label>
+            <p>62 feições · Refloresta</p>
+            <label class="opacity-label" for="opacity-fito">Opacidade <output id="value-fito">55%</output></label>
+            <input type="range" id="opacity-fito" min="0" max="100" value="55" disabled>
+            <div id="filter-fito"></div>
+          </div>
+          <div class="layer-option">
+            <label class="layer-title"><input type="checkbox" id="layer-vigor" checked disabled> Vigor de pastagens</label>
+            <p>MapBiomas · 2025* · Recorte SP</p>
+            <label class="opacity-label" for="opacity-vigor">Opacidade <output id="value-vigor">85%</output></label>
+            <input type="range" id="opacity-vigor" min="0" max="100" value="85" disabled>
+            <div id="filter-vigor"></div>
+          </div>
+          <label class="basemap-label"><input type="checkbox" id="layer-base" checked disabled> Mapa de referência · cinza</label>
+          <p id="map-status" class="map-status" role="status" aria-live="polite">Carregando camadas…</p>
+        </aside>
+        <div class="map-content">
+          <div id="map" aria-label="Mapa interativo de São Paulo"></div>
+          <div class="map-caption"><span class="status-dot" aria-hidden="true"></span> Clique nas regiões para consultar os nomes. Use + e − para ampliar.</div>
+        </div>
+      </div>
+      <section class="area-summary" aria-labelledby="area-title">
+        <h3 id="area-title">Áreas da seleção</h3>
+        <p id="area-status" class="hint" role="status">Carregando áreas pré-calculadas…</p>
+        <div class="area-cards" aria-live="polite">
+          <article><h4>Regiões ecológicas</h4><p id="area-regioes">—</p><small>Regiões selecionadas</small></article>
+          <article><h4>Fitofisionomias</h4><p id="area-fitos">—</p><small>Sub-regiões selecionadas</small></article>
+          <article class="area-baixo"><h4>Pastagem · baixo vigor</h4><p id="area-vigor-1">—</p><small>No território selecionado</small></article>
+          <article class="area-medio"><h4>Pastagem · médio vigor</h4><p id="area-vigor-2">—</p><small>No território selecionado</small></article>
+          <article class="area-alto"><h4>Pastagem · alto vigor</h4><p id="area-vigor-3">—</p><small>No território selecionado</small></article>
+        </div>
+        <p class="area-note">Estimativas em hectares na grade original do MapBiomas, com os limites originais das regiões. Os totais acompanham os filtros e incluem toda a seleção, mesmo fora da janela do mapa. Zoom, transparência e ocultação das camadas não mudam as áreas. As bases de regiões e fitofisionomias têm diferenças de cobertura; seus totais podem diferir.</p>
+        <h3 class="area-rl-title">Pastagens em reservas legais</h3>
+        <p id="area-rl-status" class="hint" role="status">Carregando áreas pré-calculadas…</p>
+        <div class="rl-filters">
+          <div><h4>Status cadastral · ind_status</h4><div id="filter-rl-status"></div></div>
+          <div><h4>Condição cadastral · des_condic</h4><div id="filter-rl-condicao"></div></div>
+        </div>
+        <p class="hint">Inclua ou retire categorias para somar as pastagens em reservas legais. Estes filtros afetam somente os três indicadores abaixo.</p>
+        <div class="area-cards area-cards-rl" aria-live="polite">
+          <article class="area-baixo"><h4>Baixo vigor · reserva legal</h4><p id="area-rl-vigor-1">—</p><small>Na seleção territorial</small></article>
+          <article class="area-medio"><h4>Médio vigor · reserva legal</h4><p id="area-rl-vigor-2">—</p><small>Na seleção territorial</small></article>
+          <article class="area-alto"><h4>Alto vigor · reserva legal</h4><p id="area-rl-vigor-3">—</p><small>Na seleção territorial</small></article>
+        </div>
+        <p class="area-note">Cada reserva contribui com toda a sua pastagem na região e fitofisionomia predominantes. Sobreposições entre reservas são somadas por cadastro. Com todas as fitofisionomias marcadas, considera-se o total da região; com seleção parcial, filtra-se também pela fito predominante. O total estadual inclui reservas sem classificação territorial. Dois registros sem área mensurável foram excluídos das áreas.</p>
+      </section>
+      <div id="map-legend" aria-label="Legenda das camadas ativas"></div>
+      <details class="map-notes">
+        <summary>Sobre as camadas e as fontes</summary>
+        <p>As fitofisionomias disponíveis dependem das regiões ecológicas selecionadas. O vigor é limitado às regiões e, quando houver seleção parcial, às fitofisionomias escolhidas. Os filtros territoriais continuam valendo quando os contornos são desligados.</p>
+        <p>As regiões são versões simplificadas para visualização dos arquivos fornecidos ao projeto. O MapBiomas apresenta pastagens com vigor baixo, médio e alto; não representa todas as formas de degradação. Áreas transparentes não têm dados de vigor ou foram excluídas pelos filtros.</p>
+        <p>O raster foi recortado pelo limite de São Paulo do IBGE (2024). As imagens do mapa foram reprojetadas e reamostradas por vizinho mais próximo; não devem ser usadas para medir áreas. Os dados de análise permanecem preservados.</p>
+        <p>*2025 é o ano indicado no nome do arquivo recebido; a coleção e o ano ainda precisam ser confirmados com o registro de download.</p>
+        <p><a href="https://brasil.mapbiomas.org/iniciativas-e-produtos/cobertura-e-uso-da-terra/pastagem/condicao-de-vigor/" target="_blank" rel="noopener">MapBiomas: produto e legenda</a> · <a href="https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2024/UFs/SP/" target="_blank" rel="noopener">IBGE: limite estadual</a></p>
+      </details>
+    </section>
+    <div class="results-heading"><h2>Cenários de recuperação</h2><span>100% da área degradada</span></div>
+    <section class="scenario-panel" aria-labelledby="scenario-title">
+      <h3 id="scenario-title">Condições de implantação</h3>
+      <p class="hint">Selecione as regiões e fitofisionomias no mapa e escolha as condições abaixo para consultar os fluxos de caixa compatíveis.</p>
+      <div class="scenario-filters">
+        <label for="scenario-faixa">Faixa<select id="scenario-faixa" disabled><option value="">Carregando…</option></select></label>
+        <label for="scenario-topografia">Topografia<select id="scenario-topografia" disabled><option value="">Carregando…</option></select></label>
+        <label for="scenario-mecanizacao">Mecanização<select id="scenario-mecanizacao" disabled><option value="">Carregando…</option></select></label>
+      </div>
+      <p id="scenario-status" class="scenario-status" role="status" aria-live="polite">Carregando opções do Refloresta…</p>
+      <details id="scenario-coverage" hidden>
+        <summary id="scenario-coverage-title"></summary>
+        <ul id="scenario-missing"></ul>
+      </details>
+      <p id="scenario-results-status" class="hint" role="status">Escolha as três condições para consultar os resultados.</p>
+      <div class="scenario-results">
+        <article><h3>Toda a área degradada</h3><dl><dt>Área com fluxo disponível</dt><dd id="cenario-total-area">—</dd><dt>Valor presente líquido</dt><dd id="cenario-total-vpl">—</dd><dt>Investimento necessário</dt><dd id="cenario-total-investimento">—</dd></dl></article>
+        <article><h3>Área degradada em reservas legais</h3><dl><dt>Área com fluxo disponível</dt><dd id="cenario-rl-area">—</dd><dt>Valor presente líquido</dt><dd id="cenario-rl-vpl">—</dd><dt>Investimento necessário</dt><dd id="cenario-rl-investimento">—</dd></dl></article>
+      </div>
+      <p class="area-note">VPL = hectares de área degradada × VPLiquido por hectare; investimento = hectares × InvNecessario por hectare. Cada área usa o fluxo da sua região e fito. As reservas legais respeitam os filtros de status e condição e são somas cadastrais. Neste cenário, área degradada corresponde à pastagem de baixo vigor, independentemente da visibilidade dessa classe no mapa. Valores negativos de VPL são preservados.</p>
+      <h3>Resultados por região e fitofisionomia</h3>
+      <p class="hint" id="scenario-table-note">Áreas degradadas, incluindo pares sem fluxo. Valores financeiros ausentes aparecem como —. As áreas das reservas respeitam os filtros cadastrais. Os indicadores acima somam somente as linhas com fluxo disponível.</p>
+      <div class="scenario-table-wrap" tabindex="0" role="region" aria-label="Resultados por região e fitofisionomia" aria-describedby="scenario-table-note">
+        <table class="scenario-table">
+          <thead><tr><th scope="col" rowspan="2">Região</th><th scope="col" rowspan="2">Fitofisionomia</th><th scope="colgroup" colspan="3">Toda a área degradada</th><th scope="colgroup" colspan="3">Área degradada em reservas legais</th><th scope="col" rowspan="2">Disponibilidade do fluxo</th></tr>
+          <tr><th scope="col">Área (ha)</th><th scope="col">VPL (R$)</th><th scope="col">Investimento (R$)</th><th scope="col">Área (ha)</th><th scope="col">VPL (R$)</th><th scope="col">Investimento (R$)</th></tr></thead>
+          <tbody id="scenario-table-body"></tbody>
+        </table>
+      </div>
+      <p id="scenario-table-empty" class="hint" hidden>Selecione uma região e uma fitofisionomia para consultar a tabela.</p>
+    </section>
+  </main>
+</body>
+</html>

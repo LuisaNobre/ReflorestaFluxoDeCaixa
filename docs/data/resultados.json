@@ -1,0 +1,24 @@
+{
+  "versao_schema": 1,
+  "atualizado_em": "2026-10-21T19:32:59.009868+00:00",
+  "status": "aguardando_dados",
+  "mensagem": "Os indicadores financeiros serão calculados após a definição das premissas dos cenários.",
+  "unidades": {
+    "area": "ha",
+    "moeda": "BRL"
+  },
+  "premissas": {
+    "ano_referencia": null,
+    "taxa_desconto_anual": null,
+    "percentuais_recuperacao": []
+  },
+  "indicadores": {
+    "area_degradada_ha": null,
+    "area_recuperada_ha": null,
+    "investimento_brl": null
+  },
+  "regioes": [],
+  "cenarios": [],
+  "mapas": [],
+  "fontes": []
+}

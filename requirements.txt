@@ -1,0 +1,9 @@
+# Processamento geográfico local (não utilizado pelo HTML).
+rasterio==1.5.2
+numpy==2.5.4
+pyshp==3.1.6
+shapely==2.2.0
+pillow==13.0.0
+pyproj==3.8.0
+openpyxl==3.1.5
+pyogrio==0.13.0
