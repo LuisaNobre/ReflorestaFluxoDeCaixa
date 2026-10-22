@@ -55,6 +55,7 @@ def main():
         aba, nomes = candidatas[0]
         indices = {campo: nomes.index(campo) for campo in CAMPOS + ["VPLiquido", "InvNecessario"]}
         registros = []
+        excluidos_investimento_negativo = 0
         for numero, linha in enumerate(aba.iter_rows(min_row=2, values_only=True), 2):
             if not any(v is not None for v in linha):
                 continue
@@ -65,6 +66,9 @@ def main():
                     raise ValueError(f"{campo} não numérico na linha {numero}")
                 registro[campo] = valor
             registro["linha_excel"] = numero
+            if registro["InvNecessario"] < 0:
+                excluidos_investimento_negativo += 1
+                continue
             registros.append(registro)
         nome_aba = aba.title
         workbook.close()
@@ -84,7 +88,8 @@ def main():
         "gerado_em": datetime.now(timezone.utc).isoformat(),
         "fonte": {"arquivo": ENTRADA.relative_to(RAIZ).as_posix(), "aba": nome_aba,
                   "sha256": hashlib.sha256(ENTRADA.read_bytes()).hexdigest()},
-        "transformacao": "IDs como texto e atributos financeiros originais VPLiquido e InvNecessario, em reais por hectare.",
+        "transformacao": "IDs como texto e atributos financeiros originais VPLiquido e InvNecessario, em reais por hectare. Fluxos com InvNecessario negativo excluídos antes de gerar opções e cenários; VPL negativo preservado.",
+        "excluidos_investimento_negativo": excluidos_investimento_negativo,
         "total_registros": len(registros),
         "opcoes": opcoes,
         "registros": registros,
@@ -94,6 +99,7 @@ def main():
     temporario.write_text(json.dumps(resultado, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     temporario.replace(SAIDA)
     print(f"Catálogo gerado: {SAIDA}")
+    print(f"Fluxos excluídos por investimento negativo: {excluidos_investimento_negativo}")
     print(f"{len(registros)} registros; " + "; ".join(f"{k}: {len(v)} opções" for k, v in opcoes.items()))
 
 

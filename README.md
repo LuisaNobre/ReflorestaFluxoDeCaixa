@@ -381,6 +381,14 @@ Depois de atualizar áreas, agregados das reservas e Excel, execute nesta ordem:
 ```
 
 O último comando gera `docs/data/cenarios.json`: para cada fluxo, multiplica
+os valores conforme descrito abaixo. Fluxos com `InvNecessario < 0` são
+excluídos na exportação do catálogo, antes de gerar opções, contagens e cenários.
+São tratados como indisponíveis; suas áreas continuam na tabela, sem valores
+financeiros quando não há fluxo válido. O Excel original permanece inalterado.
+A quantidade excluída fica em `excluidos_investimento_negativo` no catálogo.
+Investimento zero e VPL negativo são mantidos.
+
+Para cada fluxo válido, o script multiplica
 os hectares de baixo vigor do seu par `idRegiaoEco`/`idFitofisionomia` por
 `VPLiquido` e `InvNecessario`, em R$/ha. As multiplicações são realizadas em
 Python. O navegador soma resultados somente após escolher as três condições.

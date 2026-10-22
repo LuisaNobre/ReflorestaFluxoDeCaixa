@@ -13,6 +13,8 @@ def ler(nome):
 
 def main():
     catalogo = ler("filtros_cenarios.json")
+    if any(r["InvNecessario"] < 0 for r in catalogo["registros"]):
+        raise ValueError("Catálogo contém investimento negativo; execute preparar_filtros_cenarios.py")
     areas = ler("areas.json")
     config = ler("mapas/camadas.json")
     vetores = ler("mapas/" + config["fitofisionomias"]["arquivo"])
